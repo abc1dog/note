@@ -1,0 +1,6 @@
+{
+  "name": "대학생 알바 주급 계산 노트",
+  "description": "대학생을 위한 알바 개인정보 기록 및 주휴수당 포함 주급 계산 노트 웹페이지",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

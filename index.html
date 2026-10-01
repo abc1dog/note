@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대학생 알바 주급 계산 노트</title>
+  <meta name="description" content="대학생을 위한 알바 개인정보 기록 및 주휴수당 포함 주급 계산 노트 웹페이지">
+  <meta property="og:title" content="대학생 알바 주급 계산 노트">
+  <meta property="og:description" content="대학생을 위한 알바 개인정보 기록 및 주휴수당 포함 주급 계산 노트 웹페이지">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+
+  <!-- ============================================================== -->
+  <!-- [1. HTML 영역] 웹페이지의 구조와 입력 항목을 정의하는 마크업 영역 -->
+  <!-- ============================================================== -->
+
+  <!-- 전체 노트 컨테이너: 화면 중앙에 배치되는 스프링 제본 노트 카드 -->
+  <main class="notebook-wrapper">
+    <div class="notebook-card">
+
+      <!-- [장식] 노트 상단의 스프링 제본 구멍 효과 -->
+      <div class="spring-binding" aria-hidden="true">
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+        <span class="spring-hole"></span>
+      </div>
+
+      <!-- [상단 헤더 영역] 로고 및 노트 제목, 부제 -->
+      <header class="notebook-header">
+        <span class="badge-logo">알바 노트</span>
+        <h1 class="note-title">너의 주급 계산 루팡</h1>
+        <p class="note-subtitle">너의 알바 주급을 빨리 정확히 계산해준다</p>
+      </header>
+
+      <!-- [알림 메시지 바] 필수 입력 누락이나 유효성 검사 실패 시 친절히 알려주는 알림창 -->
+      <div id="alert-banner" class="alert-banner" role="alert" style="display: none;">
+        <span id="alert-message"></span>
+      </div>
+
+      <!-- [폼 영역] 브라우저 내에서만 안전하게 동작하는 폼 (서버 전송 방지) -->
+      <form id="payroll-form" novalidate onsubmit="return false;">
+
+        <!-- -------------------------------------------------------- -->
+        <!-- [섹션 1] 개인정보 영역 (이름, 전화번호, 성별, 주소, 학력) -->
+        <!-- -------------------------------------------------------- -->
+        <fieldset class="note-section">
+          <legend class="section-legend">1. 알바생 개인정보</legend>
+
+          <!-- 1. 알바생 이름 (필수 입력) -->
+          <div class="form-group">
+            <label for="user-name" class="input-label">
+              알바생 이름 <span class="required-mark" title="필수 입력">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="user-name" 
+              name="userName" 
+              class="form-control" 
+              placeholder="예: 홍길동" 
+              required 
+              autocomplete="name"
+            >
+          </div>
+
+          <!-- 2. 전화번호 -->
+          <div class="form-group">
+            <label for="user-phone" class="input-label">전화번호</label>
+            <input 
+              type="tel" 
+              id="user-phone" 
+              name="userPhone" 
+              class="form-control" 
+              placeholder="010-0000-0000" 
+              autocomplete="tel"
+            >
+          </div>
+
+          <!-- 3. 성별 (라디오 버튼 - 가로 배치) -->
+          <div class="form-group">
+            <span class="input-label">성별</span>
+            <div class="radio-group" role="radiogroup" aria-label="성별 선택">
+              <label for="gender-male" class="radio-label">
+                <input 
+                  type="radio" 
+                  id="gender-male" 
+                  name="userGender" 
+                  value="male"
+                >
+                <span>남</span>
+              </label>
+              <label for="gender-female" class="radio-label">
+                <input 
+                  type="radio" 
+                  id="gender-female" 
+                  name="userGender" 
+                  value="female"
+                >
+                <span>여</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 4. 주소 -->
+          <div class="form-group">
+            <label for="user-address" class="input-label">주소</label>
+            <input 
+              type="text" 
+              id="user-address" 
+              name="userAddress" 
+              class="form-control" 
+              placeholder="예: 서울특별시 마포구 와우산로" 
+              autocomplete="street-address"
+            >
+          </div>
+
+          <!-- 5. 학력 상태 (라디오 버튼 - 재학 / 졸업 / 자퇴) -->
+          <div class="form-group">
+            <span class="input-label">학력 상태</span>
+            <div class="radio-group" role="radiogroup" aria-label="학력 상태 선택">
+              <label for="edu-enrolled" class="radio-label">
+                <input 
+                  type="radio" 
+                  id="edu-enrolled" 
+                  name="educationStatus" 
+                  value="enrolled" 
+                  checked
+                >
+                <span>재학</span>
+              </label>
+              <label for="edu-graduated" class="radio-label">
+                <input 
+                  type="radio" 
+                  id="edu-graduated" 
+                  name="educationStatus" 
+                  value="graduated"
+                >
+                <span>졸업</span>
+              </label>
+              <label for="edu-dropout" class="radio-label">
+                <input 
+                  type="radio" 
+                  id="edu-dropout" 
+                  name="educationStatus" 
+                  value="dropout"
+                >
+                <span>자퇴</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 5-1. 학력 비고 -->
+          <div class="form-group">
+            <label for="edu-note" class="input-label">학력 비고</label>
+            <input 
+              type="text" 
+              id="edu-note" 
+              name="educationNote" 
+              class="form-control" 
+              placeholder="예: 컴퓨터공학과 3학년 1학기"
+            >
+          </div>
+
+          <!-- 5-2. 날짜 (년, 월, 일 각각 분리 입력/선택) -->
+          <div class="form-group">
+            <label class="input-label">날짜 (학적 변동일 또는 오늘 날짜)</label>
+            <div class="date-select-row">
+              <!-- 년도 입력 -->
+              <div class="date-col">
+                <label for="edu-year" class="sub-label">년</label>
+                <input 
+                  type="number" 
+                  id="edu-year" 
+                  name="eduYear" 
+                  class="form-control" 
+                  placeholder="2026" 
+                  min="1990" 
+                  max="2099"
+                  value="2026"
+                >
+              </div>
+
+              <!-- 월 선택 -->
+              <div class="date-col">
+                <label for="edu-month" class="sub-label">월</label>
+                <select id="edu-month" name="eduMonth" class="form-control">
+                  <option value="">선택</option>
+                  <option value="1">1월</option>
+                  <option value="2">2월</option>
+                  <option value="3">3월</option>
+                  <option value="4">4월</option>
+                  <option value="5">5월</option>
+                  <option value="6">6월</option>
+                  <option value="7">7월</option>
+                  <option value="8">8월</option>
+                  <option value="9">9월</option>
+                  <option value="10" selected>10월</option>
+                  <option value="11">11월</option>
+                  <option value="12">12월</option>
+                </select>
+              </div>
+
+              <!-- 일 선택 -->
+              <div class="date-col">
+                <label for="edu-day" class="sub-label">일</label>
+                <select id="edu-day" name="eduDay" class="form-control">
+                  <option value="">선택</option>
+                  <!-- 1일부터 31일까지 옵션 구성 -->
+                  <option value="1" selected>1일</option>
+                  <option value="2">2일</option>
+                  <option value="3">3일</option>
+                  <option value="4">4일</option>
+                  <option value="5">5일</option>
+                  <option value="6">6일</option>
+                  <option value="7">7일</option>
+                  <option value="8">8일</option>
+                  <option value="9">9일</option>
+                  <option value="10">10일</option>
+                  <option value="11">11일</option>
+                  <option value="12">12일</option>
+                  <option value="13">13일</option>
+                  <option value="14">14일</option>
+                  <option value="15">15일</option>
+                  <option value="16">16일</option>
+                  <option value="17">17일</option>
+                  <option value="18">18일</option>
+                  <option value="19">19일</option>
+                  <option value="20">20일</option>
+                  <option value="21">21일</option>
+                  <option value="22">22일</option>
+                  <option value="23">23일</option>
+                  <option value="24">24일</option>
+                  <option value="25">25일</option>
+                  <option value="26">26일</option>
+                  <option value="27">27일</option>
+                  <option value="28">28일</option>
+                  <option value="29">29일</option>
+                  <option value="30">30일</option>
+                  <option value="31">31일</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- [섹션 2] 주급 계산 영역 (월~일 7개 요일별 근무 현황)       -->
+        <!-- -------------------------------------------------------- -->
+        <fieldset class="note-section">
+          <legend class="section-legend">2. 요일별 알바 시간 기록</legend>
+          <p class="section-desc">각 요일별 근무 여부를 선택하고, 알바한 날의 시급과 시간을 적어주세요.</p>
+
+          <!-- 7개 요일 카드 목록 (월, 화, 수, 목, 금, 토, 일) -->
+          <div class="days-container">
+
+            <!-- 1) 월요일 카드 -->
+            <div class="day-card" data-day="월요일" data-key="mon">
+              <div class="day-card-header">
+                <span class="day-badge">월요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-mon" class="visually-hidden">월요일 근무 여부</label>
+                  <select id="day-select-mon" name="workType_mon" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-mon" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-mon" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-mon" name="hourlyWage_mon" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-mon" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-mon" name="workHours_mon" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2) 화요일 카드 -->
+            <div class="day-card" data-day="화요일" data-key="tue">
+              <div class="day-card-header">
+                <span class="day-badge">화요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-tue" class="visually-hidden">화요일 근무 여부</label>
+                  <select id="day-select-tue" name="workType_tue" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-tue" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-tue" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-tue" name="hourlyWage_tue" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-tue" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-tue" name="workHours_tue" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3) 수요일 카드 -->
+            <div class="day-card" data-day="수요일" data-key="wed">
+              <div class="day-card-header">
+                <span class="day-badge">수요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-wed" class="visually-hidden">수요일 근무 여부</label>
+                  <select id="day-select-wed" name="workType_wed" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-wed" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-wed" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-wed" name="hourlyWage_wed" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-wed" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-wed" name="workHours_wed" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4) 목요일 카드 -->
+            <div class="day-card" data-day="목요일" data-key="thu">
+              <div class="day-card-header">
+                <span class="day-badge">목요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-thu" class="visually-hidden">목요일 근무 여부</label>
+                  <select id="day-select-thu" name="workType_thu" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-thu" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-thu" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-thu" name="hourlyWage_thu" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-thu" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-thu" name="workHours_thu" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5) 금요일 카드 -->
+            <div class="day-card" data-day="금요일" data-key="fri">
+              <div class="day-card-header">
+                <span class="day-badge">금요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-fri" class="visually-hidden">금요일 근무 여부</label>
+                  <select id="day-select-fri" name="workType_fri" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-fri" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-fri" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-fri" name="hourlyWage_fri" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-fri" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-fri" name="workHours_fri" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6) 토요일 카드 -->
+            <div class="day-card weekend-sat" data-day="토요일" data-key="sat">
+              <div class="day-card-header">
+                <span class="day-badge sat-badge">토요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-sat" class="visually-hidden">토요일 근무 여부</label>
+                  <select id="day-select-sat" name="workType_sat" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-sat" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-sat" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-sat" name="hourlyWage_sat" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-sat" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-sat" name="workHours_sat" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7) 일요일 카드 -->
+            <div class="day-card weekend-sun" data-day="일요일" data-key="sun">
+              <div class="day-card-header">
+                <span class="day-badge sun-badge">일요일</span>
+                <div class="day-select-wrapper">
+                  <label for="day-select-sun" class="visually-hidden">일요일 근무 여부</label>
+                  <select id="day-select-sun" name="workType_sun" class="form-control day-status-select">
+                    <option value="">선택하세요</option>
+                    <option value="rest">휴식</option>
+                    <option value="work">알바</option>
+                  </select>
+                </div>
+              </div>
+              <div id="work-inputs-sun" class="day-work-inputs" style="display: none;">
+                <div class="input-row">
+                  <div class="input-cell">
+                    <label for="wage-sun" class="sub-label">시급 (원)</label>
+                    <input type="number" id="wage-sun" name="hourlyWage_sun" class="form-control" placeholder="예: 10030" min="0" step="10">
+                  </div>
+                  <div class="input-cell">
+                    <label for="hours-sun" class="sub-label">근무 시간 (시간)</label>
+                    <input type="number" id="hours-sun" name="workHours_sun" class="form-control" placeholder="예: 4.5" min="0" step="0.5">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </fieldset>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- [섹션 3] 버튼 영역: 계산하기 & 다시 계산 (나란히 배치)    -->
+        <!-- -------------------------------------------------------- -->
+        <div class="button-row">
+          <button type="button" id="btn-calculate" class="btn-note btn-primary">
+            계산하기
+          </button>
+          <button type="button" id="btn-reset" class="btn-note btn-secondary">
+            다시 계산
+          </button>
+        </div>
+
+        <!-- -------------------------------------------------------- -->
+        <!-- [섹션 4] 결과 메시지 박스 (초기에는 숨김 처리)            -->
+        <!-- -------------------------------------------------------- -->
+        <div id="result-box" class="result-box" style="display: none;" aria-live="polite">
+          <div class="result-header">
+            <h2 id="result-main-text" class="result-main-text"></h2>
+          </div>
+          <div class="result-details">
+            <div class="detail-item">
+              <span class="detail-label">총 근무시간</span>
+              <span id="result-total-hours" class="detail-value">0시간</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">평균 시급</span>
+              <span id="result-avg-wage" class="detail-value">0원</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">기본 주 급여</span>
+              <span id="result-base-pay" class="detail-value">0원</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">주휴수당</span>
+              <span id="result-allowance" class="detail-value">0원</span>
+            </div>
+          </div>
+          <p id="result-note" class="result-note-text"></p>
+        </div>
+
+      </form>
+
+      <!-- -------------------------------------------------------- -->
+      <!-- [섹션 5] 초보자를 위한 코드 설명 (노트 부록 요약)         -->
+      <!-- -------------------------------------------------------- -->
+      <footer class="notebook-footer">
+        <div class="code-summary-box">
+          <h3 class="summary-title">💡 친절한 프론트엔드 코드 설명 (5줄 요약)</h3>
+          <ol class="summary-list">
+            <li><strong>1. 구조(HTML):</strong> fieldset과 legend로 종이 노트의 칸을 만들고 모든 입력칸에 명확한 label과 id를 연결했습니다.</li>
+            <li><strong>2. 스타일(CSS):</strong> 베이지와 크림 화이트, 원목 갈색으로 아늑한 종이 질감과 상단 스프링 구멍 장식을 연출했습니다.</li>
+            <li><strong>3. 동적 UI:</strong> 요일별 select 선택 시 '알바'일 때만 시급과 시간 입력창이 자연스럽게 나타나고 숨겨집니다.</li>
+            <li><strong>4. 유효성 검사:</strong> 계산 버튼 클릭 시 이름, 요일 선택 여부, 시급·시간 입력을 단계별로 엄격하게 점검합니다.</li>
+            <li><strong>5. 주급 계산식:</strong> 총 15시간 이상 근무 시 법정 주휴수당(최대 40시간 비례)을 정확히 합산해 예쁜 결과 카드로 안내합니다.</li>
+          </ol>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+
+  <!-- ============================================================== -->
+  <!-- [2. CSS 영역] 디자인 및 스타일링 (<style>)                     -->
+  <!-- ============================================================== -->
+  <style>
+    /* -------------------------------------------------- */
+    /* 1) 기본 초기화 및 폰트 설정                         */
+    /* -------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      /* 전체 배경: 연한 베이지 */
+      background-color: #f5efe6;
+      /* 요구사항 폰트: '맑은 고딕', sans-serif */
+      font-family: 'Malgun Gothic', '맑은 고딕', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #333333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px;
+    }
+
+    /* -------------------------------------------------- */
+    /* 2) 노트 전체 레이아웃 & 스프링 제본 장식            */
+    /* -------------------------------------------------- */
+    .notebook-wrapper {
+      width: 100%;
+      max-width: 520px; /* 요구사항: 최대 너비 520px */
+      margin: 0 auto;
+    }
+
+    .notebook-card {
+      /* 노트 본체: 크림 화이트 */
+      background-color: #fffdf8;
+      border-radius: 8px; /* 모서리 8px */
+      /* 종이 느낌의 은은하고 부드러운 그림자 */
+      box-shadow: 0 8px 30px rgba(107, 66, 38, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+      padding: 24px 20px 28px;
+      position: relative;
+      border: 1px solid #ebdcd0;
+    }
+
+    /* 스프링 제본 구멍 장식 */
+    .spring-binding {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px dashed #e6d7c7;
+    }
+
+    .spring-hole {
+      width: 14px;
+      height: 14px;
+      background-color: #f5efe6;
+      border: 2px solid #bda897;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    /* 스프링 금속 링 효과 */
+    .spring-hole::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 3px;
+      width: 4px;
+      height: 10px;
+      background: linear-gradient(180deg, #d3c4b5 0%, #8c7360 100%);
+      border-radius: 2px;
+    }
+
+    /* -------------------------------------------------- */
+    /* 3) 상단 헤더 (로고, 노트 이름, 부제)                */
+    /* -------------------------------------------------- */
+    .notebook-header {
+      text-align: center;
+      margin-bottom: 24px;
+      border-bottom: 2px solid #6b4226; /* 포인트 색상: 원목 갈색 */
+      padding-bottom: 16px;
+    }
+
+    .badge-logo {
+      display: inline-block;
+      background-color: #6b4226; /* 포인트 원목 갈색 */
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .note-title {
+      font-size: 24px;
+      font-weight: 800;
+      color: #6b4226; /* 원목 갈색 */
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .note-subtitle {
+      font-size: 13.5px;
+      color: #7b614e;
+    }
+
+    /* -------------------------------------------------- */
+    /* 4) 알림 배너 (검증 오류 안내)                      */
+    /* -------------------------------------------------- */
+    .alert-banner {
+      background-color: #fdf2e9;
+      color: #a04000;
+      border: 1px solid #f5cba7;
+      border-left: 4px solid #6b4226;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 16px;
+      animation: alertSlide 0.3s ease-in-out;
+    }
+
+    @keyframes alertSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* -------------------------------------------------- */
+    /* 5) 섹션 묶음: fieldset & legend (노트 칸 디자인)     */
+    /* -------------------------------------------------- */
+    .note-section {
+      border: 1px solid #ebdcd0;
+      border-radius: 8px;
+      padding: 18px 16px;
+      margin-bottom: 22px;
+      background-color: #ffffff;
+    }
+
+    .section-legend {
+      font-size: 16px;
+      font-weight: 700;
+      color: #6b4226; /* 포인트 원목 갈색 */
+      padding: 0 8px;
+      letter-spacing: -0.3px;
+    }
+
+    .section-desc {
+      font-size: 12.5px;
+      color: #8b7362;
+      margin-bottom: 14px;
+    }
+
+    /* -------------------------------------------------- */
+    /* 6) 입력 폼 그룹 & 공통 컨트롤 스타일                */
+    /* -------------------------------------------------- */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .input-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a3423;
+      margin-bottom: 6px;
+    }
+
+    .sub-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #6e5846;
+      margin-bottom: 4px;
+    }
+
+    .required-mark {
+      color: #c0392b;
+      margin-left: 2px;
+    }
+
+    /* 모든 입력칸(input, select): 너비 100%, 패딩 10px, 모서리 8px, 연한 베이지 테두리 */
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: #2b1f17;
+      background-color: #ffffff;
+      border: 1px solid #e2d7ca; /* 연한 베이지 테두리 */
+      border-radius: 8px; /* 모서리 8px */
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    /* 포커스 시: 테두리 진한 베이지 + 연한 갈색 그림자 */
+    .form-control:focus {
+      outline: none;
+      border-color: #b38b6d; /* 테두리 진한 베이지 */
+      box-shadow: 0 0 0 3px rgba(107, 66, 38, 0.15); /* 연한 갈색 그림자 */
+    }
+
+    .form-control::placeholder {
+      color: #b5a494;
+      font-size: 13px;
+    }
+
+    /* 라디오 버튼 그룹: 가로로 나란히 배치하고 gap 간격 적용 */
+    .radio-group {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 20px; /* gap 간격 */
+      padding: 4px 0;
+    }
+
+    .radio-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #3c2a1e;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .radio-label input[type="radio"] {
+      cursor: pointer;
+      accent-color: #6b4226; /* 원목 갈색 포인트 테마 */
+      width: 16px;
+      height: 16px;
+    }
+
+    /* 날짜 3단 분리 행 */
+    .date-select-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .date-col {
+      flex: 1;
+    }
+
+    /* -------------------------------------------------- */
+    /* 7) 요일별 카드 스타일 (주급 계산 영역)              */
+    /* -------------------------------------------------- */
+    .days-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .day-card {
+      border: 1px solid #e8ded3;
+      background-color: #fffdf8;
+      border-radius: 8px;
+      padding: 12px 14px;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .day-card:hover {
+      border-color: #d1bfae;
+    }
+
+    .day-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .day-badge {
+      font-size: 14px;
+      font-weight: 700;
+      color: #553721;
+      padding: 3px 8px;
+      background-color: #f7eee4;
+      border-radius: 4px;
+      min-width: 58px;
+      text-align: center;
+    }
+
+    .sat-badge {
+      color: #1a5276;
+      background-color: #ebf5fb;
+    }
+
+    .sun-badge {
+      color: #922b21;
+      background-color: #fdedec;
+    }
+
+    .day-select-wrapper {
+      flex: 1;
+      max-width: 160px;
+    }
+
+    .day-status-select {
+      padding: 7px 10px;
+      font-size: 13.5px;
+    }
+
+    /* '알바' 선택 시 펼쳐지는 시급 및 근무시간 입력창 */
+    .day-work-inputs {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #e4d5c5;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .input-cell {
+      flex: 1;
+    }
+
+    /* -------------------------------------------------- */
+    /* 8) 버튼 영역: 계산하기 & 다시 계산                  */
+    /* -------------------------------------------------- */
+    .button-row {
+      display: flex;
+      gap: 10px; /* 나란히 배치 & gap 간격 */
+      margin-bottom: 22px;
+    }
+
+    /* 계산하기 / 다시 계산 버튼: 흰 배경(#ffffff), 검은 글씨, 베이지 테두리 */
+    .btn-note {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      color: #111111; /* 검은 글씨 */
+      background-color: #ffffff; /* 흰 배경(#ffffff) */
+      border: 1px solid #dcd1c3; /* 베이지 테두리 */
+      border-radius: 8px;
+      cursor: pointer;
+      /* hover 시 연한 베이지 배경으로 부드럽게 전환 */
+      transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      text-align: center;
+    }
+
+    .btn-note:hover {
+      background-color: #f5efe6; /* hover 시 연한 베이지 배경 */
+      border-color: #baa491;
+    }
+
+    .btn-note:active {
+      background-color: #ebdcd0;
+      transform: translateY(1px);
+    }
+
+    /* -------------------------------------------------- */
+    /* 9) 결과 메시지 박스 (민트색 배경, 초록 글씨)        */
+    /* -------------------------------------------------- */
+    /* 결과 메시지 박스: 민트색 배경, 초록 글씨, 모서리 8px, 처음엔 숨김 */
+    .result-box {
+      background-color: #e8f8f5; /* 민트색 배경 */
+      color: #0e6251; /* 초록 글씨 */
+      border: 1px solid #a3e4d7;
+      border-radius: 8px; /* 모서리 8px */
+      padding: 18px 16px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 12px rgba(22, 160, 133, 0.1);
+      animation: popIn 0.3s ease-out;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .result-header {
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .result-main-text {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0b5345;
+      line-height: 1.4;
+      word-break: keep-all;
+    }
+
+    .result-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 14px;
+      background-color: #ffffff;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      border: 1px solid #c2ece2;
+    }
+
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .detail-label {
+      color: #566573;
+    }
+
+    .detail-value {
+      font-weight: 700;
+      color: #117864;
+    }
+
+    .result-note-text {
+      font-size: 12.5px;
+      color: #117a65;
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    /* -------------------------------------------------- */
+    /* 10) 코드 설명 섹션 (학습용 부록 요약)              */
+    /* -------------------------------------------------- */
+    .notebook-footer {
+      border-top: 1px dashed #decbbe;
+      padding-top: 16px;
+      margin-top: 10px;
+    }
+
+    .code-summary-box {
+      background-color: #fdfaf5;
+      border: 1px solid #eedecf;
+      border-radius: 6px;
+      padding: 14px;
+    }
+
+    .summary-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #6b4226;
+      margin-bottom: 8px;
+    }
+
+    .summary-list {
+      padding-left: 18px;
+      font-size: 12px;
+      color: #5c4738;
+      line-height: 1.6;
+    }
+
+    .summary-list li {
+      margin-bottom: 4px;
+    }
+
+    /* 보조 스크린리더용 숨김 클래스 */
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* -------------------------------------------------- */
+    /* 11) 모바일 반응형 미디어 쿼리                      */
+    /* -------------------------------------------------- */
+    @media (max-width: 480px) {
+      body {
+        padding: 12px 8px;
+      }
+
+      .notebook-card {
+        padding: 18px 12px 22px;
+      }
+
+      .note-title {
+        font-size: 20px;
+      }
+
+      .radio-group {
+        gap: 12px;
+      }
+
+      .result-details {
+        grid-template-columns: 1fr;
+      }
+
+      .day-card-header {
+        flex-direction: row;
+      }
+    }
+  </style>
+
+
+  <!-- ============================================================== -->
+  <!-- [3. JavaScript 영역] 유효성 검사 및 주급 계산 로직 (<script>)    -->
+  <!-- ============================================================== -->
+  <script>
+    /**
+     * 친절한 프론트엔드 개발자의 주급 계산기 스크립트
+     * -----------------------------------------------------------------
+     * 이 스크립트는 다음 기능을 브라우저 내에서만 안전하게 수행합니다:
+     * 1. 요일별 '알바' 선택 시 시급과 시간 입력칸 표시 / '휴식' 시 숨김 및 초기화
+     * 2. 계산하기 클릭 시 필수 조건 4단계 순차적 유효성 검사
+     * 3. 법정 주휴수당(주 15시간 이상, 최대 40시간 비례) 및 총 주급 계산
+     * 4. 다시 계산 버튼 클릭 시 개인정보는 보존하고 근무 기록 및 결과만 초기화
+     */
+
+    // DOM이 완전히 로드된 후 스크립트 실행
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // 7개 요일의 키 목록 정의 (월~일 순서)
+      const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+      // 주요 HTML 엘리먼트 참조 가져오기
+      const userNameInput = document.getElementById('user-name');
+      const btnCalculate = document.getElementById('btn-calculate');
+      const btnReset = document.getElementById('btn-reset');
+      const alertBanner = document.getElementById('alert-banner');
+      const alertMessage = document.getElementById('alert-message');
+      const resultBox = document.getElementById('result-box');
+      const resultMainText = document.getElementById('result-main-text');
+      const resultTotalHours = document.getElementById('result-total-hours');
+      const resultAvgWage = document.getElementById('result-avg-wage');
+      const resultBasePay = document.getElementById('result-base-pay');
+      const resultAllowance = document.getElementById('result-allowance');
+      const resultNote = document.getElementById('result-note');
+
+      /**
+       * [함수 1] 사용자 알림 메시지 표시 (웹페이지 내 친절한 배너 + alert)
+       * 브라우저 alert 차단 위험 없이 화면 배너와 alert를 모두 안전하게 처리합니다.
+       */
+      function showAlert(msg) {
+        alertMessage.textContent = msg;
+        alertBanner.style.display = 'block';
+        alertBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try {
+          if (typeof window.alert === 'function') {
+            window.alert(msg);
+          }
+        } catch (e) {
+          // iframe 환경에서 alert가 차단되어도 화면 배너로 정상 안내
+        }
+      }
+
+      /**
+       * [함수 2] 알림 메시지 숨기기
+       */
+      function hideAlert() {
+        alertBanner.style.display = 'none';
+        alertMessage.textContent = '';
+      }
+
+      /**
+       * [이벤트 1] 7개 요일 드롭다운 변경 시 동작 등록
+       * - "알바" 선택 -> 시급/근무시간 입력칸 보이기
+       * - "휴식" 또는 "선택하세요" -> 입력칸 숨기고 값 비우기
+       */
+      dayKeys.forEach(function (key) {
+        const selectElem = document.getElementById('day-select-' + key);
+        const inputsContainer = document.getElementById('work-inputs-' + key);
+        const wageInput = document.getElementById('wage-' + key);
+        const hoursInput = document.getElementById('hours-' + key);
+
+        if (!selectElem || !inputsContainer) return;
+
+        selectElem.addEventListener('change', function () {
+          hideAlert(); // 선택을 바꾸면 이전 경고창 닫기
+
+          if (selectElem.value === 'work') {
+            // "알바"를 선택하면 입력칸 표시
+            inputsContainer.style.display = 'block';
+            // 기본 편의 시급(최저시급 수준 등)으로 포커스
+            if (!wageInput.value) {
+              wageInput.focus();
+            }
+          } else {
+            // "휴식"이나 "선택하세요"로 바꾸면 입력칸 숨김 & 값 초기화
+            inputsContainer.style.display = 'none';
+            if (wageInput) wageInput.value = '';
+            if (hoursInput) hoursInput.value = '';
+          }
+        });
+      });
+
+      /**
+       * [이벤트 2] "계산하기" 버튼 클릭 이벤트 핸들러
+       * 요구사항에 명시된 4가지 조건을 엄격한 순서대로 검사합니다.
+       */
+      btnCalculate.addEventListener('click', function () {
+        hideAlert(); // 이전 알림 숨김
+
+        // -------------------------------------------------------------
+        // [검사 1] 이름이 비어 있으면 "이름을 입력해주세요" 알림
+        // -------------------------------------------------------------
+        const userName = userNameInput.value.trim();
+        if (!userName) {
+          showAlert('이름을 입력해주세요');
+          userNameInput.focus();
+          return;
+        }
+
+        // -------------------------------------------------------------
+        // [검사 2] 요일 드롭다운이 "선택하세요" 상태인 칸이 있으면
+        //          "일 항목을 입력해주세요" 알림 (월~일 순서대로 첫 발견 즉시 중단)
+        // -------------------------------------------------------------
+        for (let i = 0; i < dayKeys.length; i++) {
+          const key = dayKeys[i];
+          const selectElem = document.getElementById('day-select-' + key);
+
+          if (!selectElem.value) {
+            showAlert('일 항목을 입력해주세요');
+            selectElem.focus();
+            return;
+          }
+        }
+
+        // -------------------------------------------------------------
+        // [검사 3] "알바"인 요일의 시급 또는 시간이 비었거나 0 이하이면
+        //          "시급,시간을 선택해주세요" 알림
+        // -------------------------------------------------------------
+        let hasAnyWork = false;
+        let totalBasePay = 0;    // 주 급여 합계
+        let totalHours = 0;      // 주 총 근무시간
+
+        for (let i = 0; i < dayKeys.length; i++) {
+          const key = dayKeys[i];
+          const selectElem = document.getElementById('day-select-' + key);
+
+          if (selectElem.value === 'work') {
+            hasAnyWork = true;
+            const wageInput = document.getElementById('wage-' + key);
+            const hoursInput = document.getElementById('hours-' + key);
+
+            const wage = parseFloat(wageInput.value);
+            const hours = parseFloat(hoursInput.value);
+
+            // 시급 또는 시간이 비었거나 NaN이거나 0 이하인 경우
+            if (isNaN(wage) || wage <= 0 || isNaN(hours) || hours <= 0) {
+              showAlert('시급,시간을 선택해주세요');
+              if (isNaN(wage) || wage <= 0) {
+                wageInput.focus();
+              } else {
+                hoursInput.focus();
+              }
+              return;
+            }
+
+            // 각 요일별 급여(시급 × 시간) 및 시간 누적
+            totalBasePay += (wage * hours);
+            totalHours += hours;
+          }
+        }
+
+        // -------------------------------------------------------------
+        // [검사 4] 7일 모두 휴식이면 "알바한 요일이 없어요" 알림
+        // -------------------------------------------------------------
+        if (!hasAnyWork) {
+          showAlert('알바한 요일이 없어요');
+          return;
+        }
+
+        // -------------------------------------------------------------
+        // [주급 및 주휴수당 계산 공식 적용]
+        // 1) 평균 시급 = 주 급여 ÷ 주 총 근무시간
+        // 2) 주휴수당 조건: 주 총 근무시간이 15시간 이상일 때만 지급
+        // 3) 주휴수당 = (주 총 근무시간 ÷ 40) × 8 × 평균 시급
+        //    (단, 총 근무시간이 40시간을 넘으면 8시간분으로 제한)
+        // 4) 최종 주급 = 주 급여 + 주휴수당
+        // -------------------------------------------------------------
+        const averageWage = totalBasePay / totalHours;
+        let holidayPay = 0; // 주휴수당 초기값
+
+        if (totalHours >= 15) {
+          // 40시간 초과 시 최대 40시간(즉 8시간분)까지만 산정
+          const effectiveHours = Math.min(totalHours, 40);
+          holidayPay = (effectiveHours / 40) * 8 * averageWage;
+        }
+
+        const finalWeeklyPay = totalBasePay + holidayPay;
+
+        // 소수점 반올림 및 천 단위 쉼표 포맷팅
+        const formattedTotalPay = Math.round(finalWeeklyPay).toLocaleString('ko-KR');
+        const formattedBasePay = Math.round(totalBasePay).toLocaleString('ko-KR');
+        const formattedHolidayPay = Math.round(holidayPay).toLocaleString('ko-KR');
+        const formattedAvgWage = Math.round(averageWage).toLocaleString('ko-KR');
+
+        // 결과 박스에 계산 결과 반영
+        resultMainText.textContent = userName + '님, 주급 계산 결과! 주급은 ' + formattedTotalPay + '원 입니다.';
+        resultTotalHours.textContent = totalHours.toFixed(1).replace('.0', '') + '시간';
+        resultAvgWage.textContent = formattedAvgWage + '원';
+        resultBasePay.textContent = formattedBasePay + '원';
+        resultAllowance.textContent = formattedHolidayPay + '원';
+
+        // 주휴수당 해당 여부 안내 문구
+        if (totalHours >= 15) {
+          resultNote.textContent = '✨ 주 15시간 이상 근무하여 주휴수당 ' + formattedHolidayPay + '원이 포함되었습니다.';
+        } else {
+          resultNote.textContent = 'ℹ️ 주 15시간 미만 근무로 주휴수당은 지급되지 않습니다. (주휴수당 0원)';
+        }
+
+        // 결과 박스 보여주기
+        resultBox.style.display = 'block';
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+
+      /**
+       * [이벤트 3] "다시 계산" 버튼 클릭 이벤트 핸들러
+       * 개인정보(이름, 번호, 성별, 주소, 학력 등)는 그대로 유지하고,
+       * 7개 요일 선택값, 시급/시간 입력값, 결과 박스만 초기화합니다.
+       */
+      btnReset.addEventListener('click', function () {
+        hideAlert();
+
+        // 7개 요일 카드 초기화
+        dayKeys.forEach(function (key) {
+          const selectElem = document.getElementById('day-select-' + key);
+          const inputsContainer = document.getElementById('work-inputs-' + key);
+          const wageInput = document.getElementById('wage-' + key);
+          const hoursInput = document.getElementById('hours-' + key);
+
+          if (selectElem) selectElem.value = '';
+          if (inputsContainer) inputsContainer.style.display = 'none';
+          if (wageInput) wageInput.value = '';
+          if (hoursInput) hoursInput.value = '';
+        });
+
+        // 결과 박스 숨기기 및 초기화
+        resultBox.style.display = 'none';
+        resultMainText.textContent = '';
+      });
+
+    });
+  </script>
+
+</body>
+</html>
